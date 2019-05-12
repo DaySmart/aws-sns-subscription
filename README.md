@@ -41,7 +41,22 @@ AWS_SECRET_ACCESS_KEY=XXX
 
 ```yml
 # serverless.yml
-...
+
+name: my-topic
+stage: dev
+
+AwsSnsSubscriptionLambda:
+  component: '@serverless/aws-sns-subscription'
+  inputs:
+    topic: arn:aws:sns:us-east-1:123456789012:my-topic
+    protocol: lambda
+    endpoint: arn:aws:lambda:us-east-1:123456789012:function:my-function
+AwsSnsSubscriptionEmail:
+  component: '@serverless/aws-sns-subscription'
+  inputs:
+    topic: arn:aws:sns:us-east-1:123456789012:my-topic
+    protocol: email
+    endpoint: hello@serverless.com
 ```
 
 ### 4. Deploy
@@ -49,11 +64,14 @@ AWS_SECRET_ACCESS_KEY=XXX
 ```console
 AwsSnsSubscription (master)$ components
 
-  AwsSnsSubscription › outputs:
-  ....
+  AwsSnsSubscriptionLambda › outputs:
+  arn:  'arn:aws:sns:us-east-1:123456789012:my-topic:95e7dbca-9e45-4e4d-84f3-66f282b89b01'
+
+  AwsSnsSubscriptionEmail › outputs:
+  arn:  'arn:aws:sns:us-east-1:123456789012:my-topic:2495cad9-928a-4853-84b1-fcf613df61e7'
 
 
-  4s › dev › AwsSnsSubscription › done
+  2s › dev › AwsSnsSubscription › done
 
 AwsSnsSubscription (master)$
 

@@ -84,13 +84,24 @@ class AwsSnsSubscription extends Component {
     config.endpoint = inputs.endpoint || this.state.endpoint
     config.topic = inputs.topic || this.state.topic
 
-    const { SubscriptionArn } = await getPrevious(
-      merge({ sns }, pick(['endpoint', 'topic'], config))
-    )
+    try {
+      const previousInstance = await getPrevious(
+        merge({ sns }, pick(['endpoint', 'topic'], config))
+      )
 
-    config.subscriptionArn = SubscriptionArn
+      if (isNil(previousInstance)) {
+        const error = new Error('No previous deployment')
+        error.code = 'NotFound'
+        throw error
+      }
 
-    await getProtocol(config.protocol).remove(merge({ aws, awsConfig }, config))
+      config.subscriptionArn = previousInstance.SubscriptionArn
+      await getProtocol(config.protocol).remove(merge({ aws, awsConfig }, config))
+    } catch (error) {
+      if (error.code !== 'NotFound') {
+        throw error
+      }
+    }
 
     this.state = {}
     await this.save()
