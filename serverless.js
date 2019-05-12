@@ -1,7 +1,7 @@
 const aws = require('aws-sdk')
 const { isNil, mergeDeepRight, pick, merge, equals, not } = require('ramda')
 const { Component } = require('@serverless/components')
-const { getProtocol, getPrevious, configChanged } = require('./utils')
+const { getProtocol, getPrevious } = require('./utils')
 
 const outputsList = ['arn']
 
@@ -24,11 +24,19 @@ class AwsSnsSubscription extends Component {
 
     const sns = new aws.SNS(awsConfig)
 
-    const prevSubscription = await getPrevious(merge({ sns }, pick(['endpoint', 'topic'], config)))
+    // Temporary should deploy solution
+    // until core handles the replacement logic
+    const action = await this.shouldDeploy(inputs)
+    if (action === 'replace') {
+      await this.remove(this.state)
+    } else {
+      const prevSubscription = await getPrevious(
+        merge({ sns }, pick(['endpoint', 'topic'], config))
+      )
+      config.arn = prevSubscription ? prevSubscription.SubscriptionArn : null
+    }
 
-    config.arn = prevSubscription ? prevSubscription.SubscriptionArn : null
-
-    if (configChanged({ current: config, previous: prevSubscription })) {
+    if (!isNil(action)) {
       const response = await getProtocol(config.protocol).deploy(merge({ aws, awsConfig }, config))
       config.arn = response.subscriptionArn
     }
@@ -48,47 +56,21 @@ class AwsSnsSubscription extends Component {
   async shouldDeploy(inputs = {}) {
     const config = mergeDeepRight(defaults, inputs)
 
-    console.log('shouldDeploy', this.state.topic, config.topic)
+    if (
+      not(equals(this.state.endpoint, config.endpoint)) ||
+      not(equals(this.state.protocol, config.protocol)) ||
+      not(equals(this.state.topic, config.topic))
+    ) {
+      return 'replace'
+    }
 
-    // if (this.state.topic !== config.topic) {
-    //   return 'replace'
-    // }
-
-    return undefined
-
-    // const awsConfig = {
-    //   region: config.region,
-    //   credentials: this.context.credentials.aws
-    // }
-
-    // const sns = new aws.SNS(awsConfig)
-    // const prevSubscription = await getPrevious(merge({ sns }, pick(['endpoint', 'topic'], config)))
-
-    // if (!prevSubscription) {
-    //   return 'deploy'
-    // }
-
-    // this.state.endpoint
-
-    // const inputs = {
-    //   topic: this.topic,
-    //   protocol: this.protocol,
-    //   endpoint: this.endpoint,
-    //   subscriptionAttributes: this.subscriptionAttributes
-    // }
-    // const prevInputs = prevInstance ? pick(keys(inputs), prevInstance) : {}
-    // const configChanged = not(equals(inputs, prevInputs))
-    // if (
-    //   not(equals(prevInstance.protocol, inputs.protocol)) ||
-    //   not(equals(prevInstance.topic, inputs.topic))
-    // ) {
-    //   return 'replace'
-    // } else if (configChanged) {
-    //   return 'deploy'
-    // }
+    if (not(equals(this.state.subscriptionAttributes || [], config.subscriptionAttributes))) {
+      return 'deploy'
+    }
 
     return undefined
   }
+
   async remove(inputs = {}) {
     const config = mergeDeepRight(defaults, inputs)
 

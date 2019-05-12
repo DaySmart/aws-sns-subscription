@@ -1,6 +1,22 @@
 const { subscribe, unsubscribe } = require('./lib')
 const crypto = require('crypto')
 
+const removePermission = async ({ lambda, endpoint, topic }) => {
+  const statementId = `InvokeLamda${crypto
+    .createHash('md5')
+    .update(topic)
+    .digest('hex')}`
+
+  return lambda
+    .removePermission({
+      FunctionName: endpoint,
+      StatementId: statementId,
+      Qualifier: undefined, // todo
+      RevisionId: undefined // todo
+    })
+    .promise()
+}
+
 const updatePermission = async ({ lambda, endpoint, topic }) => {
   const statementId = `InvokeLamda${crypto
     .createHash('md5')
@@ -22,22 +38,6 @@ const updatePermission = async ({ lambda, endpoint, topic }) => {
       Principal: 'sns.amazonaws.com',
       SourceArn: topic,
       StatementId: statementId
-    })
-    .promise()
-}
-
-const removePermission = async ({ lambda, endpoint, topic }) => {
-  const statementId = `InvokeLamda${crypto
-    .createHash('md5')
-    .update(topic)
-    .digest('hex')}`
-
-  return lambda
-    .removePermission({
-      FunctionName: endpoint,
-      StatementId: statementId,
-      Qualifier: undefined, // todo
-      RevisionId: undefined // todo
     })
     .promise()
 }

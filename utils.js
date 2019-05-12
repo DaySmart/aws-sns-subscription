@@ -36,17 +36,7 @@ const getPrevious = async ({ sns, topic, endpoint }) => {
   return subscription
 }
 
-const configChanged = ({ current, previous }) => {
-  console.log({ current, previous })
-  return (
-    isNil(previous) ||
-    (current.protocol !== previous.Protocol ||
-      current.endpoint !== previous.Endpoint)
-  )
-}
-
 module.exports = {
   getPrevious,
-  getProtocol,
-  configChanged
+  getProtocol
 }

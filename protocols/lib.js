@@ -1,7 +1,6 @@
-const { find, isEmpty, isNil, whereEq } = require('ramda')
+const { find, isNil, whereEq } = require('ramda')
 
 const subscribe = async ({ aws, awsConfig, topic, protocol, endpoint }) => {
-  // console.log(`Creating a SNS subcription to topic '${topic}'`)
   const sns = new aws.SNS(awsConfig)
   const response = await sns
     .subscribe({
@@ -10,19 +9,16 @@ const subscribe = async ({ aws, awsConfig, topic, protocol, endpoint }) => {
       Endpoint: endpoint
     })
     .promise()
-  // console.log(`SNS subcription '${response.SubscriptionArn}' to topic '${topic}' created`)
   return response
 }
 
 const unsubscribe = async ({ aws, awsConfig, subscriptionArn }) => {
-  // console.log(`Removing the SNS Subscription '${subscriptionArn}'`)
   const sns = new aws.SNS(awsConfig)
   const response = await sns
     .unsubscribe({
       SubscriptionArn: subscriptionArn
     })
     .promise()
-  // console.log(`SNS subcription '${subscriptionArn}' removed`)
   return response
 }
 
@@ -32,15 +28,6 @@ const setSubscriptionAttributes = async ({
   attributeName,
   attributeValue
 }) => {
-  if (isEmpty(attributeValue)) {
-    console.log(
-      `Removing SNS Subscription Attribute '${attributeName}' from subscription ${subscriptionArn}`
-    )
-  } else {
-    console.log(
-      `Setting SNS Subscription Attribute '${attributeName}' to subscription ${subscriptionArn}`
-    )
-  }
   try {
     const response = await sns
       .setSubscriptionAttributes({

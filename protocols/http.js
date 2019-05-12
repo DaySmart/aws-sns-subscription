@@ -10,9 +10,8 @@ const deploy = async ({ aws, awsConfig, topic, protocol, endpoint }) => {
       2000
     )
     return confirmationResponse
-  } else {
-    return { subscriptionArn: response.SubscriptionArn }
   }
+  return { subscriptionArn: response.SubscriptionArn }
 }
 
 const remove = async ({ aws, awsConfig, subscriptionArn }) => {
