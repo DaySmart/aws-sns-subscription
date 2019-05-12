@@ -26,7 +26,7 @@ class AwsSnsSubscription extends Component {
 
     // Temporary should deploy solution
     // until core handles the replacement logic
-    const action = await this.shouldDeploy(inputs)
+    const action = this.shouldDeploy(inputs)
     if (action === 'replace') {
       await this.remove(this.state)
     } else {
@@ -53,7 +53,7 @@ class AwsSnsSubscription extends Component {
     return outputs
   }
 
-  async shouldDeploy(inputs = {}) {
+  shouldDeploy(inputs = {}) {
     const config = mergeDeepRight(defaults, inputs)
 
     if (
