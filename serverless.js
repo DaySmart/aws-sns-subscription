@@ -27,7 +27,7 @@ class AwsSnsSubscription extends Component {
     // Temporary should deploy solution
     // until core handles the replacement logic
     const action = this.shouldDeploy(inputs)
-    if (action === 'replace') {
+    if (action === 'replace' && Object.keys(this.state).length !== 0) {
       await this.remove(this.state)
     } else {
       const prevSubscription = await getPrevious(
