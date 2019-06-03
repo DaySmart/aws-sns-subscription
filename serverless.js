@@ -84,6 +84,10 @@ class AwsSnsSubscription extends Component {
     config.endpoint = inputs.endpoint || this.state.endpoint
     config.topic = inputs.topic || this.state.topic
 
+    if (!config.endpoint && !config.topic) {
+      return
+    }
+
     try {
       const previousInstance = await getPrevious(
         merge({ sns }, pick(['endpoint', 'topic'], config))
