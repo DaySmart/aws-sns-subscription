@@ -49,7 +49,10 @@ class AwsSnsSubscription extends Component {
     await this.save()
 
     const outputs = pick(outputsList, config)
-    this.cli.outputs(outputs)
+
+    this.ui.log()
+    this.ui.output('arn', outputs.arn)
+
     return outputs
   }
 
