@@ -1,6 +1,6 @@
 const aws = require('aws-sdk')
 const { isNil, mergeDeepRight, pick, merge, equals, not } = require('ramda')
-const { Component } = require('@serverless/components')
+const { Component } = require('@serverless/core')
 const { getProtocol, getPrevious } = require('./utils')
 
 const outputsList = ['arn']
@@ -15,8 +15,8 @@ const defaults = {
 
 class AwsSnsSubscription extends Component {
   async default(inputs = {}) {
+    this.context.status(`Deploying`)
     const config = mergeDeepRight(defaults, inputs)
-
     const awsConfig = {
       region: config.region,
       credentials: this.context.credentials.aws
@@ -47,12 +47,7 @@ class AwsSnsSubscription extends Component {
     this.state.arn = config.subscriptionArn
 
     await this.save()
-
     const outputs = pick(outputsList, config)
-
-    this.ui.log()
-    this.ui.output('arn', outputs.arn)
-
     return outputs
   }
 
@@ -75,6 +70,7 @@ class AwsSnsSubscription extends Component {
   }
 
   async remove(inputs = {}) {
+    this.context.status(`Removing`)
     const config = mergeDeepRight(defaults, inputs)
 
     const awsConfig = {
