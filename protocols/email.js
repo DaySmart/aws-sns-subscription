@@ -1,7 +1,9 @@
 const { subscribe, unsubscribe } = require('./lib')
 
-const deploy = async ({ aws, awsConfig, topic, protocol, endpoint }) =>
-  subscribe({ aws, awsConfig, topic, protocol, endpoint })
+const deploy = async ({ aws, awsConfig, topic, protocol, endpoint }) => {
+  const { SubscriptionArn } = await subscribe({ aws, awsConfig, topic, protocol, endpoint })
+  return { subscriptionArn: SubscriptionArn }
+}
 
 const remove = async ({ aws, awsConfig, subscriptionArn }) => {
   if (subscriptionArn !== 'PendingConfirmation') {
