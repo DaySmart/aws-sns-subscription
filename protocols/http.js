@@ -2,8 +2,8 @@ const { subscribe, unsubscribe, waitForConfirmation } = require('./lib')
 
 // info https://docs.aws.amazon.com/sns/latest/dg/SendMessageToHttp.html`
 
-const deploy = async ({ aws, awsConfig, topic, protocol, endpoint }) => {
-  const { SubscriptionArn } = await subscribe({ aws, awsConfig, topic, protocol, endpoint })
+const deploy = async ({ aws, awsConfig, topic, protocol, endpoint, subscriptionAttributes }) => {
+  const { SubscriptionArn } = await subscribe({ aws, awsConfig, topic, protocol, endpoint, subscriptionAttributes })
   if (SubscriptionArn === 'pending confirmation') {
     const confirmationResponse = await waitForConfirmation(
       { aws, awsConfig, topic, protocol, endpoint },
