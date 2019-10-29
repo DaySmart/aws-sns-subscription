@@ -30,7 +30,6 @@ const setSubscriptionAttributes = async ({
   attributeValue
 }) => {
   try {
-          console.log('got here');
     const response = await sns
       .setSubscriptionAttributes({
         AttributeName: attributeName,
