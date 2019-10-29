@@ -1,10 +1,10 @@
 const { subscribe, unsubscribe, splitArn } = require('./lib')
 
-const deploy = async ({ aws, awsConfig, topic, protocol, endpoint }) => {
+const deploy = async ({ aws, awsConfig, topic, protocol, endpoint, subscriptionAttributes }) => {
   const sqs = new aws.SQS(awsConfig)
   const { region, accountId, resource } = splitArn(endpoint)
   const queueUrl = `https://sqs.${region}.amazonaws.com/${accountId}/${resource}`
-  const { SubscriptionArn } = await subscribe({ aws, awsConfig, topic, protocol, endpoint })
+  const { SubscriptionArn } = await subscribe({ aws, awsConfig, topic, protocol, endpoint, subscriptionAttributes })
   const permission = {
     QueueUrl: queueUrl,
     Attributes: {

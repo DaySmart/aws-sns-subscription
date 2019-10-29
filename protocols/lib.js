@@ -1,12 +1,13 @@
 const { find, isNil, whereEq } = require('ramda')
 
-const subscribe = async ({ aws, awsConfig, topic, protocol, endpoint }) => {
+const subscribe = async ({ aws, awsConfig, topic, protocol, endpoint, subscriptionAttributes }) => {
   const sns = new aws.SNS(awsConfig)
   const response = await sns
     .subscribe({
       TopicArn: topic,
       Protocol: protocol,
-      Endpoint: endpoint
+      Endpoint: endpoint,
+      Attributes: subscriptionAttributes
     })
     .promise()
   return response

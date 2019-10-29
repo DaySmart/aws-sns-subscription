@@ -1,7 +1,7 @@
 const { subscribe, unsubscribe } = require('./lib')
 
-const deploy = async ({ aws, awsConfig, topic, protocol, endpoint }) =>{
-  const { SubscriptionArn } = await subscribe({ aws, awsConfig, topic, protocol, endpoint })
+const deploy = async ({ aws, awsConfig, topic, protocol, endpoint, subscriptionAttributes }) =>{
+  const { SubscriptionArn } = await subscribe({ aws, awsConfig, topic, protocol, endpoint, subscriptionAttributes })
   return { subscriptionArn: SubscriptionArn }
 }
 

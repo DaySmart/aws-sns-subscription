@@ -9,7 +9,7 @@ const defaults = {
   topic: undefined,
   protocol: 'https',
   endpoint: 'https://serverless.com',
-  subscriptionAttributes: [],
+  subscriptionAttributes: {},
   region: 'us-east-1'
 }
 
@@ -62,7 +62,7 @@ class AwsSnsSubscription extends Component {
       return 'replace'
     }
 
-    if (not(equals(this.state.subscriptionAttributes || [], config.subscriptionAttributes))) {
+    if (not(equals(this.state.subscriptionAttributes || {}, config.subscriptionAttributes))) {
       return 'deploy'
     }
 

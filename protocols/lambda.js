@@ -42,10 +42,10 @@ const updatePermission = async ({ lambda, endpoint, topic }) => {
     .promise()
 }
 
-const deploy = async ({ aws, awsConfig, topic, protocol, endpoint }) => {
+const deploy = async ({ aws, awsConfig, topic, protocol, endpoint, subscriptionAttributes }) => {
   const lambda = new aws.Lambda(awsConfig)
   const [subscription, permission] = await Promise.all([
-    subscribe({ aws, awsConfig, topic, protocol, endpoint }),
+    subscribe({ aws, awsConfig, topic, protocol, endpoint, subscriptionAttributes }),
     updatePermission({ lambda, endpoint, topic })
   ])
   return {
