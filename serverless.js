@@ -26,6 +26,7 @@ class AwsSnsSubscription extends Component {
 
     // Temporary should deploy solution
     // until core handles the replacement logic
+    //TomTest
     const action = this.shouldDeploy(inputs)
     if (action === 'replace' && Object.keys(this.state).length !== 0) {
       await this.remove(this.state)
